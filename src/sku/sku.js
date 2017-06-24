@@ -18,7 +18,13 @@
  * 	'型号': ['A', 'B']
  * }
  */
-
+// 模板渲染
+var renderTpl = (template, params, pureHtml, escape) => {
+	var rtn = template.replace(/\{\$(.+?)\}/gi, function (total, param) {
+		return (params[param] === undefined) ? total : (escape ? encodeURIComponent(params[param]) : params[param]);
+	});
+	return pureHtml ? rtn : $(rtn);
+};
 let goodsData = [
 		{'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001'},
 		{'颜色': '红', '尺码': '中', '型号': 'A', 'id': '002'},
@@ -79,6 +85,8 @@ const sku = {
 	},
 	/**
 	 * 得到结果
+	 * @param {string} key 查找关键字以；分割
+	 * @return {array} 所有可选属性数组
 	 */
 	getResult(key) {
 		// 如缓存中存在，则直接返回结果
@@ -101,14 +109,52 @@ const sku = {
 		// 缓存数据
 		this.cacheData[key] = this.result;
 		if (this.result.length === 1) {
-			console.log(this.result[0]);
 			this.resultID = this.goodsDict[this.result[0]];
 		}
 		return this.result;
 	},
+	/**
+	 * 页面渲染
+	 */
+	renderPage($cateTpl, $btnTpl, $dom) {
+		for (let key in sku.showData) {
+			if (key === 'id') {
+				return;
+			} else {
+				let $item = renderTpl($cateTpl, {key}).appendTo($dom);
+				sku.showData[key].forEach(item => {
+					renderTpl($btnTpl, {item}).appendTo($item);
+				});
+			}
+		}
+	},
+	init() {
+		this.calculateShowData();
+		this.renderPage($('#cate_item').text(), $('#btn_arr').text(), $('.sku-wrapper'));
+	}
 };
+sku.init();
 
-sku.calculateShowData();
-sku.getResult('红;中;A');
-console.log(sku.result);
-console.log(sku.resultID);
+let choose = [];
+$('.sku-wrapper button').on('click', function() {
+	let key = '';
+	choose[$(this).parent().index()] = $(this).text();
+	console.log(choose);
+	choose.forEach(item => {
+		let $btn = $('button[data-name="' + item + '"]');
+		if ($btn.hasClass('checked') && item === $(this).text()) {
+			$btn.removeClass('checked');
+		} else {
+			$btn.addClass('checked');
+			if (item !== '') {
+				key += item + ';';
+			}
+		}
+	});
+	// console.log(key);
+	let result = sku.getResult(key);
+	$('button').removeClass('can-check').attr('disabled', true);
+	result.forEach(item => {
+		$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
+	});
+});
