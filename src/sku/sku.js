@@ -26,14 +26,14 @@ var renderTpl = (template, params, pureHtml, escape) => {
 	return pureHtml ? rtn : $(rtn);
 };
 let goodsData = [
-		{'color': '红', 'size': '大', '型号': 'A', 'id': '001'},
-		{'color': '红', 'size': '中', '型号': 'A', 'id': '002'},
-		{'color': '红', 'size': '大', '型号': 'B', 'id': '003'},
-		{'color': '黑', 'size': '中', '型号': 'B', 'id': '004'},
-		{'color': '白', 'size': '中', '型号': 'A', 'id': '005'},
-		{'color': '白', 'size': '大', '型号': 'A', 'id': '006'},
-		{'color': '绿', 'size': '大', '型号': 'B', 'id': '007'},
-		{'color': '绿', 'size': '大', '型号': 'C', 'id': '008'}
+		{'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001'},
+		{'颜色': '红', '尺码': '中', '型号': 'A', 'id': '002'},
+		{'颜色': '红', '尺码': '大', '型号': 'B', 'id': '003'},
+		{'颜色': '黑', '尺码': '中', '型号': 'B', 'id': '004'},
+		{'颜色': '白', '尺码': '中', '型号': 'A', 'id': '005'},
+		{'颜色': '白', '尺码': '大', '型号': 'A', 'id': '006'},
+		{'颜色': '绿', '尺码': '大', '型号': 'B', 'id': '007'},
+		{'颜色': '绿', '尺码': '大', '型号': 'C', 'id': '008'}
 	];
 const sku = {
 	// 原始数据
@@ -121,15 +121,17 @@ const sku = {
 	 * 页面渲染
 	 */
 	renderPage($cateTpl, $btnTpl, $dom) {
+		let index = 0;
 		for (let key in sku.showData) {
 			if (key === 'id') {
 				return;
 			} else {
 				let $item = renderTpl($cateTpl, {key}).appendTo($dom);
 				sku.showData[key].forEach(item => {
-					renderTpl($btnTpl, {item}).appendTo($item);
+					renderTpl($btnTpl, {item, index}).appendTo($item);
 				});
 			}
+			index++;
 		}
 	},
 	init(data, $parentText, $btnText, $wrapper) {
@@ -141,22 +143,28 @@ const sku = {
 		let choose = [];
 		$btn.on('click', function() {
 			let key = '';
-			let index = $(this).parent().index();
+			let index = $(this).attr('data-index');
+			$('button[data-index!="' + index + '"]').addClass('can-check').attr('disabled', false);
 			choose[index] = $(this).text();
 			choose.forEach(item => {
 				let $btn = $('button[data-name="' + item + '"]');
 				if ($btn.hasClass('checked') && item === $(this).text()) {
 					$btn.removeClass('checked');
 					choose[index] = '';
+					choose.forEach((item, _index) => {
+						if (item) {
+							index = _index;
+						}
+					});
 				} else {
-					$btn.addClass('checked');
+					$btn.addClass('checked').siblings().removeClass('checked');
 					if (item !== '') {
 						key += item + ';';
 					}
 				}
 			});
 			let result = sku.getResult(key);
-			$btn.removeClass('can-check').attr('disabled', true);
+			$('button[data-index!="' + index + '"]').removeClass('can-check').attr('disabled', true);
 			result.forEach(item => {
 				$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
 			});
