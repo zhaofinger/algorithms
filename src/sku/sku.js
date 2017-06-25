@@ -26,18 +26,18 @@ var renderTpl = (template, params, pureHtml, escape) => {
 	return pureHtml ? rtn : $(rtn);
 };
 let goodsData = [
-		{'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001'},
-		{'颜色': '红', '尺码': '中', '型号': 'A', 'id': '002'},
-		{'颜色': '红', '尺码': '大', '型号': 'B', 'id': '003'},
-		{'颜色': '黑', '尺码': '中', '型号': 'B', 'id': '004'},
-		{'颜色': '白', '尺码': '中', '型号': 'A', 'id': '005'},
-		{'颜色': '白', '尺码': '大', '型号': 'A', 'id': '006'},
-		{'颜色': '绿', '尺码': '大', '型号': 'B', 'id': '007'},
-		{'颜色': '绿', '尺码': '大', '型号': 'C', 'id': '008'}
+		{'color': '红', 'size': '大', '型号': 'A', 'id': '001'},
+		{'color': '红', 'size': '中', '型号': 'A', 'id': '002'},
+		{'color': '红', 'size': '大', '型号': 'B', 'id': '003'},
+		{'color': '黑', 'size': '中', '型号': 'B', 'id': '004'},
+		{'color': '白', 'size': '中', '型号': 'A', 'id': '005'},
+		{'color': '白', 'size': '大', '型号': 'A', 'id': '006'},
+		{'color': '绿', 'size': '大', '型号': 'B', 'id': '007'},
+		{'color': '绿', 'size': '大', '型号': 'C', 'id': '008'}
 	];
 const sku = {
 	// 原始数据
-	data: goodsData,
+	data: [],
 	
 	// 展示数据
 	showData: {},
@@ -97,7 +97,11 @@ const sku = {
 		// 继续查找
 		let result = '';
 		for (let _key in this.goodsDict) {
-			if (_key.indexOf(key) !== -1) {
+			let keyArr = key.split(';');
+			let _keyArr = _key.split(';');
+			let arr = keyArr.concat(_keyArr);
+			arr = Array.from(new Set(arr));
+			if (arr.length === _keyArr.length) {
 				result += _key;
 				this.result.push(_key);
 			}
@@ -128,33 +132,37 @@ const sku = {
 			}
 		}
 	},
-	init() {
+	init(data, $parentText, $btnText, $wrapper) {
+		this.data = data;
 		this.calculateShowData();
-		this.renderPage($('#cate_item').text(), $('#btn_arr').text(), $('.sku-wrapper'));
+		this.renderPage($parentText, $btnText, $wrapper);
+	},
+	pageShow($btn) {
+		let choose = [];
+		$btn.on('click', function() {
+			let key = '';
+			let index = $(this).parent().index();
+			choose[index] = $(this).text();
+			choose.forEach(item => {
+				let $btn = $('button[data-name="' + item + '"]');
+				if ($btn.hasClass('checked') && item === $(this).text()) {
+					$btn.removeClass('checked');
+					choose[index] = '';
+				} else {
+					$btn.addClass('checked');
+					if (item !== '') {
+						key += item + ';';
+					}
+				}
+			});
+			let result = sku.getResult(key);
+			$btn.removeClass('can-check').attr('disabled', true);
+			result.forEach(item => {
+				$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
+			});
+		});
 	}
 };
-sku.init();
 
-let choose = [];
-$('.sku-wrapper button').on('click', function() {
-	let key = '';
-	choose[$(this).parent().index()] = $(this).text();
-	console.log(choose);
-	choose.forEach(item => {
-		let $btn = $('button[data-name="' + item + '"]');
-		if ($btn.hasClass('checked') && item === $(this).text()) {
-			$btn.removeClass('checked');
-		} else {
-			$btn.addClass('checked');
-			if (item !== '') {
-				key += item + ';';
-			}
-		}
-	});
-	// console.log(key);
-	let result = sku.getResult(key);
-	$('button').removeClass('can-check').attr('disabled', true);
-	result.forEach(item => {
-		$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
-	});
-});
+sku.init(goodsData, $('#cate_item').text(), $('#btn_arr').text(), $('.sku-wrapper'), $('.sku-wrapper button'));
+sku.pageShow($('.sku-wrapper button'));
