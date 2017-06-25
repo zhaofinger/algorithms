@@ -88,10 +88,11 @@ const sku = {
 	 * @param {string} key 查找关键字以；分割
 	 * @return {array} 所有可选属性数组
 	 */
-	getResult(key) {
+	getResult(key, lastSiblingsArr, isRealFind = true) {
 		// 如缓存中存在，则直接返回结果
-		if (this.cacheData[key]) {
-			return this.cacheData[key];
+		if (this.cacheData[key] && isRealFind) {
+			this.result = this.cacheData[key];
+			return this.result;
 		}
 
 		// 继续查找
@@ -103,19 +104,29 @@ const sku = {
 			arr = Array.from(new Set(arr));
 			if (arr.length === _keyArr.length) {
 				result += _key;
-				this.result.push(_key);
 			}
 		}
 
-		// 所有可选属性
-		this.result = Array.from(new Set(result.split(';')));
+		if (isRealFind) {
+			// 所有可选属性
+			this.result = result.split(';');
+			let oldResult = this.getResult(key.slice(0, -2), [], false);
+			lastSiblingsArr.forEach(item => {
+				if (oldResult.indexOf(item) !== -1) {
+					this.result.push(item);
+				}
+			});
+			this.result = Array.from(new Set(this.result));
 
-		// 缓存数据
-		this.cacheData[key] = this.result;
-		if (this.result.length === 1) {
-			this.resultID = this.goodsDict[this.result[0]];
+			// 缓存数据
+			this.cacheData[key] = this.result;
+			if (this.result.length === 1) {
+				this.resultID = this.goodsDict[this.result[0]];
+			}
+			return this.result;
+		} else {
+			return result;
 		}
-		return this.result;
 	},
 	/**
 	 * 页面渲染
@@ -138,10 +149,12 @@ const sku = {
 		this.data = data;
 		this.calculateShowData();
 		this.renderPage($parentText, $btnText, $wrapper);
+		this.getResult('', []);
 	},
 	pageShow($btn) {
 		let choose = [];
 		$btn.on('click', function() {
+			let lastSiblingsArr = [];
 			let key = '';
 			let index = $(this).attr('data-index');
 			choose[index] = $(this).text();
@@ -157,7 +170,10 @@ const sku = {
 					}
 				}
 			});
-			let result = sku.getResult(key);
+			$('button[data-name="' + key.slice(-2, -1) + '"]').siblings('button').each((index, item) => {
+				lastSiblingsArr.push($(item).text())
+			});
+			let result = sku.getResult(key, lastSiblingsArr);
 			$btn.removeClass('can-check').attr('disabled', true);
 			result.forEach(item => {
 				$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
