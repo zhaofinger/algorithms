@@ -144,18 +144,12 @@ const sku = {
 		$btn.on('click', function() {
 			let key = '';
 			let index = $(this).attr('data-index');
-			$('button[data-index!="' + index + '"]').addClass('can-check').attr('disabled', false);
 			choose[index] = $(this).text();
 			choose.forEach(item => {
 				let $btn = $('button[data-name="' + item + '"]');
 				if ($btn.hasClass('checked') && item === $(this).text()) {
 					$btn.removeClass('checked');
 					choose[index] = '';
-					choose.forEach((item, _index) => {
-						if (item) {
-							index = _index;
-						}
-					});
 				} else {
 					$btn.addClass('checked').siblings().removeClass('checked');
 					if (item !== '') {
@@ -164,7 +158,7 @@ const sku = {
 				}
 			});
 			let result = sku.getResult(key);
-			$('button[data-index!="' + index + '"]').removeClass('can-check').attr('disabled', true);
+			$btn.removeClass('can-check').attr('disabled', true);
 			result.forEach(item => {
 				$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
 			});
