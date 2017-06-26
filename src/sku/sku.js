@@ -82,16 +82,20 @@ const sku = {
 		for (let key in this.showData) {
 			this.allKeys.push(this.showData[key]);
 		}
+		console.log(this.goodsDict);
+		console.log(this.allKeys);
 	},
 	/**
 	 * 得到结果
 	 * @param {string} key 查找关键字以；分割
 	 * @return {array} 所有可选属性数组
 	 */
-	getResult(key, lastSiblingsArr, isRealFind = true) {
+	getResult(key, isRealFind = true) {
 		// 如缓存中存在，则直接返回结果
 		if (this.cacheData[key] && isRealFind) {
 			this.result = this.cacheData[key];
+			this.resultID = this.goodsDict[key] ? this.goodsDict[key] : '';
+			console.log(this.resultID);
 			return this.result;
 		}
 
@@ -110,19 +114,24 @@ const sku = {
 		if (isRealFind) {
 			// 所有可选属性
 			this.result = result.split(';');
-			let oldResult = this.getResult(key.slice(0, -2), [], false);
-			lastSiblingsArr.forEach(item => {
-				if (oldResult.indexOf(item) !== -1) {
-					this.result.push(item);
+			if (key.length > 0) {
+				for (let i = 0; i < key.split(';').length; i++) {
+					let _arr = key.split(';');
+					_arr.splice(i, 1);
+					let oldResult = this.getResult(_arr.join(';'), false);
+					this.allKeys[i].forEach(item => {
+						if (oldResult.indexOf(item) !== -1) {
+							this.result.push(item);
+						}
+					});
 				}
-			});
+			}
 			this.result = Array.from(new Set(this.result));
 
 			// 缓存数据
 			this.cacheData[key] = this.result;
-			if (this.result.length === 1) {
-				this.resultID = this.goodsDict[this.result[0]];
-			}
+			this.resultID = this.goodsDict[key] ? this.goodsDict[key] : '';
+			console.log(this.resultID);
 			return this.result;
 		} else {
 			return result;
@@ -154,7 +163,6 @@ const sku = {
 	pageShow($btn) {
 		let choose = [];
 		$btn.on('click', function() {
-			let lastSiblingsArr = [];
 			let key = '';
 			let index = $(this).attr('data-index');
 			choose[index] = $(this).text();
@@ -170,10 +178,7 @@ const sku = {
 					}
 				}
 			});
-			$('button[data-name="' + key.slice(-2, -1) + '"]').siblings('button').each((index, item) => {
-				lastSiblingsArr.push($(item).text())
-			});
-			let result = sku.getResult(key, lastSiblingsArr);
+			let result = sku.getResult(key);
 			$btn.removeClass('can-check').attr('disabled', true);
 			result.forEach(item => {
 				$('button[data-name="' + item + '"]').addClass('can-check').attr('disabled', false);
