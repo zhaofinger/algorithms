@@ -84,6 +84,7 @@ const sku = {
 		}
 		console.log(this.goodsDict);
 		console.log(this.allKeys);
+		console.log(this.showData);
 	},
 	/**
 	 * 得到结果
@@ -114,17 +115,27 @@ const sku = {
 		if (isRealFind) {
 			// 所有可选属性
 			this.result = result.split(';');
-			if (key.length > 0) {
-				for (let i = 0; i < key.split(';').length; i++) {
-					let _arr = key.split(';');
-					_arr.splice(i, 1);
-					let oldResult = this.getResult(_arr.join(';'), false);
-					this.allKeys[i].forEach(item => {
-						if (oldResult.indexOf(item) !== -1) {
-							this.result.push(item);
-						}
-					});
-				}
+			let _keyArr = key.split(';');
+			if (_keyArr[_keyArr.length - 1] === '') {
+				_keyArr.pop();
+			}
+			for (let i = 0; i < _keyArr.length; i++) {
+				let _arr = key.split(';');
+				let str = _arr.splice(i, 1);
+				let oldResult = this.getResult(_arr.join(';'), false);
+				let index = '';
+				// 获取该key所在索引
+				this.allKeys.forEach((item, i) => {
+					if (item.indexOf(str.join('')) !== -1) {
+						index = i;
+						return;
+					}
+				});
+				this.allKeys[index].forEach(item => {
+					if (oldResult.indexOf(item) !== -1) {
+						this.result.push(item);
+					}
+				});
 			}
 			this.result = Array.from(new Set(this.result));
 
