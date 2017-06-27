@@ -26,14 +26,14 @@ var renderTpl = (template, params, pureHtml, escape) => {
 	return pureHtml ? rtn : $(rtn);
 };
 let goodsData = [
-		{'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001'},
-		{'颜色': '红', '尺码': '中', '型号': 'A', 'id': '002'},
-		{'颜色': '红', '尺码': '大', '型号': 'B', 'id': '003'},
-		{'颜色': '黑', '尺码': '中', '型号': 'B', 'id': '004'},
-		{'颜色': '白', '尺码': '中', '型号': 'A', 'id': '005'},
-		{'颜色': '白', '尺码': '大', '型号': 'A', 'id': '006'},
-		{'颜色': '绿', '尺码': '大', '型号': 'B', 'id': '007'},
-		{'颜色': '绿', '尺码': '大', '型号': 'C', 'id': '008'}
+		{'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001', 'num': 0},
+		{'颜色': '红', '尺码': '中', '型号': 'A', 'id': '002', 'num': 0},
+		{'颜色': '红', '尺码': '大', '型号': 'B', 'id': '003', 'num': 0},
+		{'颜色': '黑', '尺码': '中', '型号': 'B', 'id': '004', 'num': 3},
+		{'颜色': '白', '尺码': '中', '型号': 'A', 'id': '005', 'num': 2},
+		{'颜色': '白', '尺码': '大', '型号': 'A', 'id': '006', 'num': 1},
+		{'颜色': '绿', '尺码': '大', '型号': 'B', 'id': '007', 'num': 0},
+		{'颜色': '绿', '尺码': '大', '型号': 'C', 'id': '008', 'num': 1}
 	];
 const sku = {
 	// 原始数据
@@ -64,7 +64,7 @@ const sku = {
 		for (let item of this.data) {
 			let _dict = '';
 			for (let key in item) {
-				if (key !== 'id') {
+				if (key !== 'id' && key !== 'num') {
 					_dict += item[key] + ';';
 				}
 				if (this.showData[key]) {
@@ -76,7 +76,12 @@ const sku = {
 					this.showData[key] = new Array(item[key]);
 				}
 			}
-			this.goodsDict[_dict] = item.id;
+			if (item.num > 0) {
+				this.goodsDict[_dict] = {
+					id: item.id,
+					num: item.num
+				};
+			}
 		}
 
 		for (let key in this.showData) {
