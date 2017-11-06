@@ -1,3 +1,15 @@
+/**
+ * @Author: zhaoFinger
+ * @Date: 2017-11-07 00:46:22
+ * @Last Modified by:   zhaoFinger
+ * @Last Modified time: 2017-11-07 00:46:22
+ */
+
+/**
+ * 快排序
+ * @param {array} arr 数组
+ * @return {array} 排序后的数组
+ */
 const quickSort = arr => {
 	if (arr.length <= 1) {
 		return arr;

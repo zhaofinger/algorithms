@@ -1,4 +1,11 @@
 /**
+ * @Author: zhaoFinger
+ * @Date: 2017-11-07 00:46:38
+ * @Last Modified by:   zhaoFinger
+ * @Last Modified time: 2017-11-07 00:46:38
+ */
+
+/**
  * 拿到的数据
  *[
  *	 {'颜色': '红', '尺码': '大', '型号': 'A', 'id': '001'},
@@ -38,7 +45,7 @@ let goodsData = [
 const sku = {
 	// 原始数据
 	data: [],
-	
+
 	// 展示数据
 	showData: {},
 
@@ -47,10 +54,10 @@ const sku = {
 
 	// 所有商品数据字典
 	goodsDict: {},
-	
+
 	// 缓存查找数据
 	cacheData: {},
-	
+
 	// 所有可选属性
 	result: [],
 
