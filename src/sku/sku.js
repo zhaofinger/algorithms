@@ -1,8 +1,8 @@
 /**
  * @Author: zhaoFinger
  * @Date: 2017-11-07 00:46:38
- * @Last Modified by:   zhaoFinger
- * @Last Modified time: 2017-11-07 00:46:38
+ * @Last Modified by: zhaoFinger
+ * @Last Modified time: 2017-11-10 11:55:06
  */
 
 /**
@@ -143,6 +143,7 @@ const sku = {
 						return;
 					}
 				});
+				oldResult = oldResult.split(';');
 				this.allKeys[index].forEach(item => {
 					if (oldResult.indexOf(item) !== -1) {
 						this.result.push(item);
