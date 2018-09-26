@@ -1,45 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>sku</title>
-	<style>
-		.sku-item {
-			padding: 10px;
-		}
-		button {
-			padding: 4px 12px;
-			margin: 0 10px;
-			background-color: #999999;
-			color: #ffffff;
-			border: 0;
-			border-radius: 3px;
-			cursor: pointer;
-		}
-		button.checked {
-			background: #10ae58;
-		}
-		.can-check {
-			background: #666666;
-		}
-	</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>sku</title>
+  <style>
+    .sku-item {
+      padding: 10px;
+    }
+    button {
+      padding: 4px 12px;
+      margin: 0 10px;
+      background-color: #999999;
+      color: #ffffff;
+      border: 0;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button.checked {
+      background: #10ae58;
+    }
+    .can-check {
+      background: #666666;
+    }
+  </style>
 </head>
 <body>
-	<div class='sku-wrapper'></div>
-	
-	<!-- template -->
-	<script type="text/template" id="cate_item">
-		<div class='sku-item'>
-			<span>{$key}:</span>
-		</div>
-	</script>
-	<script type="text/template" id="btn_arr">
-		<button type="button" data-name='{$item}' data-index='{$index}' class='can-check'>{$item}</button>
-	</script>
+  <div class='sku-wrapper'></div>
 
-	<script src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
-	<script src='./sku.js'></script>
+  <!-- template -->
+  <script type="text/template" id="cate_item">
+    <div class='sku-item'>
+      <span>{$key}:</span>
+    </div>
+  </script>
+  <script type="text/template" id="btn_arr">
+    <button type="button" data-name='{$item}' data-index='{$index}' class='can-check'>{$item}</button>
+  </script>
+
+  <script src='http://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js'></script>
+  <script src='./sku.js'></script>
 </body>
 </html>
