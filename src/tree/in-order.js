@@ -6,8 +6,8 @@ const TreeNode = require('./tree-node');
  */
 function inOrder(treeNode) {
   if (treeNode) {
-    prevOrder(treeNode.left);
+    inOrder(treeNode.left);
     console.log(treeNode.val);
-    prevOrder(treeNode.right);
+    inOrder(treeNode.right);
   }
 }
