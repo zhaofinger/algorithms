@@ -5,7 +5,7 @@
  */
 function debounce(fn, delay) {
   let timer;
-  return function() {
+  return function () {
     if (timer) clearTimeout(timer);
     let _this = this;
     let args = arguments;
@@ -15,4 +15,9 @@ function debounce(fn, delay) {
   };
 }
 
-window.onscroll = debounce();
+// 样例
+
+const logTime = () => {
+  console.log(new Date());
+}
+window.onscroll = debounce(logTime, 600);
